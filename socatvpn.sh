@@ -137,6 +137,7 @@ if [ "$1" == "cert" ]; then
 		echo -n "Client public key: "
 		print_public_key ./cert/client.crt
 	fi
+	echo -n "Client private key: "
 	print_private_key ./cert/client.key
 
 	exit 0
