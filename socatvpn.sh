@@ -27,13 +27,17 @@ set -euo pipefail
 function print_usage() {
 	echo "Usage: $0 [command]"
 	echo "Commands:"
-	echo "  install           Install required packages."
+	echo "  install           Install required dependencies."
 	echo "  cert-server       Generate server certificate. Overwrite existing."
 	echo "  cert-client       Generate client certificate. Overwrite existing."
 	echo "  cert              Generate server and client certificates. Keep existing."
 	echo "  publickey         Print client and server public keys."
 	echo "  server [port]     Run socat VPN server. Requires client certificate."
 	echo "  client [ip:port]  Run socat VPN client. Requires client certificate and private key."
+}
+
+function command_exists {
+	command -v "$@" &>/dev/null
 }
 
 function print_public_key() {
@@ -57,10 +61,6 @@ function print_both_public_keys() {
 	else
 		echo "Client public key not found,"
 	fi
-}
-
-function command_exists {
-	command -v "$@" &>/dev/null
 }
 
 function gen_server_cert() {
@@ -276,6 +276,8 @@ if [ "$1" == "client" ]; then
 		) || IPV4=""
 		if [ -n "$IPV4" ]; then
 			echo "IPv4 address: $IPV4"
+		else
+			exit 1
 		fi
 		IPV6=$(
 			curl -sS \
