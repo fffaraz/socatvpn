@@ -173,11 +173,6 @@ if [ "$1" == "server" ]; then
 		echo "Server certificate not found."
 		exit 1
 	fi
-
-	echo "IPv4 address: $(dig +short myip.opendns.com @208.67.222.222 a)"
-	echo "IPv6 address: $(dig +short myip.opendns.com @2620:0:ccc::2 aaaa)"
-	print_both_public_keys
-	echo ""
 	PORT="$2"
 
 	docker rm -f ghost 1>/dev/null 2>&1 || true
