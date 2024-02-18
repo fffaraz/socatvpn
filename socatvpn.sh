@@ -298,7 +298,7 @@ if [ "$1" == "client" ]; then
 	echo "Listening on port 1080 for HTTP/SOCKS5 proxy connections..."
 	echo ""
 	socat -d \
-		TCP4-LISTEN:1081,bind=127.0.0.1,fork,reuseaddr \
+		TCP4-LISTEN:1080,bind=127.0.0.1,fork,reuseaddr \
 		OPENSSL-CONNECT:${SERVER_ADDR},commonname=${COMMON_NAME},verify=1,cert=./cert/client.crt,key=./cert/client.key,cafile=./cert/server.crt
 
 	exit 0
