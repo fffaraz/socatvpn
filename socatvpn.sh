@@ -55,18 +55,11 @@ function print_both_public_keys() {
 	fi
 }
 
-if [ $# -lt 1 ]; then
-	print_usage
-	exit 1
-fi
+function command_exists {
+	command -v "$@" &>/dev/null
+}
 
-if [ "$1" == "install" ]; then
-	apt-get update
-	apt-get install -yq curl docker dnsutils openssl socat vnstat xxd
-	exit 0
-fi
-
-if [ "$1" == "cert-server" ]; then
+function gen_server_cert() {
 	IPV4=$(dig +short myip.opendns.com @208.67.222.222 a) || IPV4=""
 	echo "Server IPv4 address: $IPV4"
 
@@ -91,11 +84,9 @@ if [ "$1" == "cert-server" ]; then
 
 	echo -n "Server public key: "
 	print_public_key ./cert/server.crt
+}
 
-	exit 0
-fi
-
-if [ "$1" == "cert-client" ]; then
+function gen_client_cert() {
 	mkdir -p ./cert
 	rm -f ./cert/client.key
 	rm -f ./cert/client.crt
@@ -105,20 +96,42 @@ if [ "$1" == "cert-client" ]; then
 
 	echo -n "Client public key: "
 	print_public_key ./cert/client.crt
+}
 
+if [ $# -lt 1 ]; then
+	print_usage
+	exit 1
+fi
+
+if [ "$1" == "install" ]; then
+	sudo apt-get update
+	sudo apt-get install -yq curl dnsutils openssl socat vnstat xxd
+	if ! command_exists docker; then
+		sudo apt-get install -yq docker
+	fi
+	exit 0
+fi
+
+if [ "$1" == "cert-server" ]; then
+	gen_server_cert
+	exit 0
+fi
+
+if [ "$1" == "cert-client" ]; then
+	gen_client_cert
 	exit 0
 fi
 
 if [ "$1" == "cert" ]; then
 	if [ ! -f ./cert/server.key ]; then
-		$0 cert-server
+		gen_server_cert
 	else
 		echo -n "Server public key: "
 		print_public_key ./cert/server.crt
 	fi
 
 	if [ ! -f ./cert/client.key ]; then
-		$0 cert-client
+		gen_client_cert
 	else
 		echo -n "Client public key: "
 		print_public_key ./cert/client.crt
@@ -142,7 +155,7 @@ if [ "$1" == "server" ]; then
 		exit 1
 	fi
 	if [ ! -f ./cert/server.key ]; then
-		$0 cert-server
+		gen_server_cert
 	fi
 	if [ ! -f ./cert/server.crt ]; then
 		echo "Server certificate not found."
