@@ -106,9 +106,6 @@ fi
 if [ "$1" == "install" ]; then
 	sudo apt-get update
 	sudo apt-get install -yq curl dnsutils openssl socat vnstat xxd
-	if ! command_exists docker; then
-		sudo apt-get install -yq docker
-	fi
 	exit 0
 fi
 
@@ -149,6 +146,9 @@ if [ "$1" == "server" ]; then
 	if [ $# -lt 2 ]; then
 		echo "Usage: $0 server [port]"
 		exit 1
+	fi
+	if ! command_exists docker; then
+		curl -fsSL https://get.docker.com/ | sudo sh
 	fi
 	if [ ! -f ./cert/client.crt ]; then
 		echo "Client certificate not found."
