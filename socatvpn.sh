@@ -27,17 +27,21 @@ set -euo pipefail
 function print_usage() {
 	echo "Usage: $0 [command]"
 	echo "Commands:"
-	echo "  install           Install required packages."
-	echo "  cert-server       Generate server certificate. Overwrite existing."
-	echo "  cert-client       Generate client certificate. Overwrite existing."
-	echo "  cert              Generate server and client certificates. Keep existing."
-	echo "  publickey         Print client and server public keys."
-	echo "  server [port]     Run socat VPN server. Requires client certificate."
-	echo "  client [ip:port]  Run socat VPN client. Requires client certificate and private key."
+	echo "  install                  Install required packages."
+	echo "  cert-server              Generate server certificate. Overwrite existing."
+	echo "  cert-client              Generate client certificate. Overwrite existing."
+	echo "  cert                     Generate server and client certificates. Keep existing."
+	echo "  key                      Print server public key and client public/private key."
+	echo "  server [port]            Run socat VPN server. Requires client certificate."
+	echo "  client [ip:port] [pkey]  Run socat VPN client. Requires client private key."
 }
 
 function print_public_key() {
 	openssl x509 -in "$1" -noout -pubkey | openssl pkey -pubin -outform DER | tail -c+13 | xxd -p -c 256
+}
+
+function print_private_key() {
+	openssl pkey -in "$1" -outform DER | tail -c+13 | xxd -p -c 256
 }
 
 function print_both_public_keys() {
@@ -133,12 +137,19 @@ if [ "$1" == "cert" ]; then
 		echo -n "Client public key: "
 		print_public_key ./cert/client.crt
 	fi
+	print_private_key ./cert/client.key
 
 	exit 0
 fi
 
-if [ "$1" == "publickey" ]; then
+if [ "$1" == "key" ]; then
 	print_both_public_keys
+	if [ ! -f ./cert/client.key ]; then
+		echo "Client private key not found."
+		exit 1
+	fi
+	echo -n "Client private key: "
+	print_private_key ./cert/client.key
 	exit 0
 fi
 
@@ -187,14 +198,20 @@ fi
 
 if [ "$1" == "client" ]; then
 	if [ $# -lt 2 ]; then
-		echo "Usage: $0 client [ip:port]"
+		echo "Usage: $0 client [ip:port] [privatekey]"
 		exit 1
 	fi
 	if [ ! -f ./cert/client.crt ] || [ ! -f ./cert/client.key ]; then
-		echo "Client certificate or private key not found. Please run:"
-		echo "$0 cert-client"
-		echo "And then copy the ./cert/client.crt file to the ./cert directory on the server."
-		exit 1
+		if [ $# -lt 3 ]; then
+			echo "Client certificate or private key not found."
+			echo "Usage: $0 client [ip:port] [privatekey]"
+			exit 1
+		fi
+		mkdir -p ./cert
+		rm -f ./cert/client.crt
+		rm -f ./cert/client.key
+		echo "$3" | xxd -r -p | openssl pkey -inform DER -outform PEM -out ./cert/client.key
+		openssl req -new -x509 -sha256 -key ./cert/client.key -out ./cert/client.crt -days 3650 -subj '/'
 	fi
 	SERVER_ADDR="$2"
 	COMMON_NAME="${SERVER_ADDR%%:*}" # remove port number
