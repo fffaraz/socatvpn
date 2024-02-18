@@ -122,6 +122,26 @@ if ! command_exists xxd; then
 	exit 1
 fi
 
+if [ -f ./client.key ]; then
+	mkdir -p ./cert
+	mv -f ./client.key ./cert/client.key
+fi
+
+if [ -f ./client.crt ]; then
+	mkdir -p ./cert
+	mv -f ./client.crt ./cert/client.crt
+fi
+
+if [ -f ./server.key ]; then
+	mkdir -p ./cert
+	mv -f ./server.key ./cert/server.key
+fi
+
+if [ -f ./server.crt ]; then
+	mkdir -p ./cert
+	mv -f ./server.crt ./cert/server.crt
+fi
+
 if [ "$1" == "install" ]; then
 	sudo apt-get update
 	sudo apt-get install -yq curl dnsutils openssl socat vnstat xxd
