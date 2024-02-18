@@ -41,7 +41,7 @@ function print_public_key() {
 }
 
 function print_private_key() {
-	openssl pkey -in "$1" -outform DER | tail -c+13 | xxd -p -c 256
+	openssl pkey -in "$1" -outform DER | xxd -p -c 256
 }
 
 function print_both_public_keys() {
@@ -197,16 +197,18 @@ if [ "$1" == "client" ]; then
 		echo "Usage: $0 client [ip:port] [privatekey]"
 		exit 1
 	fi
-	if [ ! -f ./cert/client.crt ] || [ ! -f ./cert/client.key ]; then
+	if [ ! -f ./cert/client.key ]; then
 		if [ $# -lt 3 ]; then
-			echo "Client certificate or private key not found."
-			echo "Usage: $0 client [ip:port] [privatekey]"
+			echo "Client private key not found."
+			echo "Usage: $0 client [ip:port] [private-key]"
 			exit 1
 		fi
 		mkdir -p ./cert
 		rm -f ./cert/client.crt
 		rm -f ./cert/client.key
 		echo "$3" | xxd -r -p | openssl pkey -inform DER -outform PEM -out ./cert/client.key
+	fi
+	if [ ! -f ./cert/client.crt ]; then
 		openssl req -new -x509 -sha256 -key ./cert/client.key -out ./cert/client.crt -days 3650 -subj '/'
 	fi
 	SERVER_ADDR="$2"
