@@ -5,6 +5,8 @@ Secure yet simple VPN tunnel using socat and openssl
 ```
 wget https://raw.githubusercontent.com/fffaraz/socatvpn/main/socatvpn.sh
 chmod +x socatvpn.sh
+
+./socatvpn.sh install
 ```
 
 2. Generate a client certificate on the client:
