@@ -177,7 +177,7 @@ if [ "$1" == "server" ]; then
 		1>/dev/null 2>&1
 
 	killall socat 2>/dev/null || true
-	socat -d -d \
+	socat -d \
 		OPENSSL-LISTEN:${PORT},bind=0.0.0.0,fork,reuseaddr,verify=1,cert=./cert/server.crt,key=./cert/server.key,cafile=./cert/client.crt \
 		TCP4:127.0.0.1:3128 || true
 
