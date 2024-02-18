@@ -1,5 +1,5 @@
 # socatVPN
-Secure yet simple VPN tunnel using socat and openssl
+Secure yet simple VPN tunnel using socat and openssl (SOCKS5 over TLS)
 
 1. Download `socatvpn.sh` and make it executable:
 ```
