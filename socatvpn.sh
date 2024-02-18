@@ -220,8 +220,6 @@ if [ "$1" == "client" ]; then
 		) || IPV4=""
 		if [ -n "$IPV4" ]; then
 			echo "IPv4 address: $IPV4"
-		else
-			exit 1
 		fi
 		IPV6=$(
 			curl -sS \
@@ -234,9 +232,9 @@ if [ "$1" == "client" ]; then
 		) || IPV6=""
 		if [ -n "$IPV6" ]; then
 			echo "IPv6 address: $IPV6"
-		else
-			exit 1
 		fi
+
+		echo ""
 	fi
 
 	echo "Listening on port 1080 for HTTP/SOCKS5 proxy connections..."
