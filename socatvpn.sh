@@ -1,7 +1,8 @@
 #!/bin/bash
 #
-# Socat VPN: secure yet simple VPN tunnel using socat and openssl (v1.0.0)
+# SocatVPN: secure yet simple VPN tunnel using socat and openssl (v1.0.0)
 # Copyright (c) 2024 Faraz Fallahi <fffaraz@gmail.com>
+# https://github.com/fffaraz/socatvpn
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +26,7 @@
 set -euo pipefail
 
 function print_usage() {
+	echo "SocatVPN: secure yet simple VPN tunnel using socat and openssl"
 	echo "Usage: $0 [command]"
 	echo "Commands:"
 	echo "  install           Install required dependencies."
