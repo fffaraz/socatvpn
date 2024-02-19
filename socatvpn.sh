@@ -274,7 +274,7 @@ if [ "$1" == "client" ]; then
 				--proxy-cacert ./cert/server.crt \
 				--proxy-cert ./cert/client.crt \
 				--proxy-key ./cert/client.key \
-				"http://ipv4.icanhazip.com"
+				"https://ipv4.icanhazip.com"
 		) || IPV4=""
 		if [ -n "$IPV4" ]; then
 			echo "IPv4 address: $IPV4"
@@ -288,7 +288,7 @@ if [ "$1" == "client" ]; then
 				--proxy-cacert ./cert/server.crt \
 				--proxy-cert ./cert/client.crt \
 				--proxy-key ./cert/client.key \
-				"http://ipv6.icanhazip.com"
+				"https://ipv6.icanhazip.com"
 		) || IPV6=""
 		if [ -n "$IPV6" ]; then
 			echo "IPv6 address: $IPV6"
