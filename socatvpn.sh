@@ -86,7 +86,7 @@ function gen_server_cert() {
 	rm -f ./cert/server.crt
 
 	openssl genpkey -algorithm ed25519 -out ./cert/server.key
-	openssl req -new -x509 -sha256 -key ./cert/server.key -out ./cert/server.crt -days 3650 -subj '/CN=*.nip.io' -addext "$ALT_NAMES"
+	openssl req -new -x509 -sha256 -key ./cert/server.key -out ./cert/server.crt -days 3650 -subj '/CN=example.com' -addext "$ALT_NAMES"
 
 	echo -n "Server public key: "
 	print_public_key ./cert/server.crt
